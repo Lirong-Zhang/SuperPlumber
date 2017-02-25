@@ -10,21 +10,31 @@ import re
 import select
 import math
 
+
+
 pygame.mixer.init(44100, -16,2,2048)
-pygame.mixer.music.load("music.wav")
-pygame.mixer.music.play(-1)
-falling_sound = pygame.mixer.Sound("falling.wav")
+#pygame.mixer.music.load("main_theme_fast.ogg")
+#pygame.mixer.music.play(-1)
+start_sound = pygame.mixer.Sound("start.wav")
+play_sound = pygame.mixer.Sound("main_theme_fast.ogg")
+falling_sound = pygame.mixer.Sound("death.wav")
 port = 7000
 server = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
 server.bind(('', port))
 server.setblocking(0)
+clock = pygame.time.Clock()
 class FlappyBird:
+
+
     def __init__(self):
-        self.screen = pygame.display.set_mode((657, 298))
-        self.bird = pygame.Rect(65, 50, 26, 48) #??
-        self.background = pygame.image.load("assets/background.png").convert()
-        #self.background = setup.GFX["assets/background.png"]
-        self.background = pygame.transform.scale(self.background,(657, 298))                
+       
+        #self.background = pygame.image.load("assets/background.png").convert()
+        #self.background = pygame.transform.scale(self.background,(657, 298))                
+        self.screen = pygame.display.set_mode((657, 296),0,32)
+        
+        self.bird = pygame.Rect(65, 50, 26, 48) #??   
+        
+        #self.clock = pygame.time.Clock()
         
         self.asset_1 = pygame.image.load("assets/1.png").convert_alpha()
         self.asset_2 = pygame.image.load("assets/2.png").convert_alpha()
@@ -46,8 +56,8 @@ class FlappyBird:
         
         #self.wallDown = pygame.image.load("assets/top.png").convert_alpha()
         
-        self.start_img = pygame.image.load("assets/background.png").convert_alpha() #start screen
-        self.start_img = pygame.transform.scale(self.background,(657, 298))
+        self.start_img = pygame.image.load("assets/start.png").convert_alpha() #start screen
+        self.start_img = pygame.transform.scale(self.start_img,(657, 298))
         
         self.get_ready_img = pygame.image.load("assets/get_ready.png").convert_alpha() #get ready marks
         self.gap = 200 #distance between upper wall and lower wall
@@ -62,8 +72,35 @@ class FlappyBird:
         self.offset = random.randint(-50, 50)
         self.state = "start"
         self.font = 0
-        self.clock = 0
+        clock = 0
+    
+    # def background(self):
+        
+        # b1 = "assets/background.png"
+        # back = pygame.image.load(b1).convert()
+        # back2 = pygame.image.load(b1).convert()
+        # back = pygame.transform.scale(back,(3687, 296))            
+        # back2 = pygame.transform.scale(back2,(3687, 296))    
+        
+        # x = 3687
+        # screenWidth = 3687
+        
+        # while True:
+            # for event in pygame.event.get():
+                # if event.type == QUIT:
+                    # pygame.quit()
+                    # sys.exit()
 
+            # self.screen.blit(back, (x,0))
+            # self.screen.blit(back2,(x-screenWidth,0))
+
+            # x = x - 1
+            # if x == 0:
+                # x = screenWidth
+
+            # msElapsed = clock.tick(100)
+            # pygame.display.flip()   
+    
 
     def updateWalls(self):
         self.wallx -= 5
@@ -133,10 +170,37 @@ class FlappyBird:
 
     def play(self):
 
-        self.screen.fill((255, 255, 255)) #fill Surface with white color???
-        self.screen.blit(self.background, (0, 0)) #draw one image onto another
+        #self.screen.fill((255, 255, 255)) #fill Surface with white color???
+        #self.screen.blit(self.background, (0, 0)) #draw one image onto another
         # self.screen.blit(self.wallUp,
                          # (self.wallx, 360 + self.gap - self.offset))
+
+                          
+        # b1 = "assets/background.png"
+        # back = pygame.image.load(b1).convert()
+        # back2 = pygame.image.load(b1).convert()
+        # back = pygame.transform.scale(back,(3687, 296))            
+        # back2 = pygame.transform.scale(back2,(3687, 296))    
+        
+        # x = 3687
+        # screenWidth = 3687
+        
+        # while True:
+            # for event in pygame.event.get():
+                # if event.type == QUIT:
+                    # pygame.quit()
+                    # sys.exit()
+
+        # self.screen.blit(back, (x,0))
+        # self.screen.blit(back2,(x-screenWidth,0))
+
+        # x = x - 1
+        # if x == 0:
+            # x = screenWidth
+
+        # msElapsed = clock.tick(100)
+        # pygame.display.flip()   
+                         
         self.screen.blit(self.wallUp,
                           (self.wallx, 220 + self.offset))                         
                          
@@ -150,7 +214,6 @@ class FlappyBird:
                                      (200, 50)) #render(text, antialias, color, background=None)
         if self.dead:
             self.sprite = 2
-            pygame.mixer.Sound.play(falling_sound)
         elif self.jump >-40:
             self.sprite = 1
         else:
@@ -178,12 +241,36 @@ class FlappyBird:
 
 
     def run(self):
-        self.clock = pygame.time.Clock()
+        #self.clock = pygame.time.Clock()
         pygame.font.init()
-        self.font = pygame.font.SysFont("Arial", 50) 	#create a Font object from the system fonts
+        self.font = pygame.font.SysFont("Consolas", 50) 	#create a Font object from the system fonts
+        
+        b1 = "assets/background.png"
+        back = pygame.image.load(b1).convert()
+        back2 = pygame.image.load(b1).convert()
+        back = pygame.transform.scale(back,(3687, 296))            
+        back2 = pygame.transform.scale(back2,(3687, 296))          
+
+        x = 3687
+        screenWidth = 3687
+        
         while True:
-            self.clock.tick(60) #unit:ms
+            clock.tick(60) #unit:ms
             readable, writable, errored  = select.select([server], [], [], 0)
+            
+            if self.state == "play":
+                self.screen.blit(back, (x,0))
+                self.screen.blit(back2,(x-screenWidth,0))
+
+                x = x - 5
+                if x <= 0:
+                    x = screenWidth
+
+                #msElapsed = clock.tick(60)
+                pygame.display.flip()   
+                             
+          
+            
             for s in readable: #with nodes
                 if s is server:
                     data, addr = server.recvfrom(1024)
@@ -220,10 +307,17 @@ class FlappyBird:
                              -1,
                              (255, 255, 255)),
                       (50, 50))
+                pygame.mixer.Sound.stop(play_sound)
+                pygame.mixer.Sound.play(falling_sound)
+      
             if self.state == "play":
                 self.play()
+                pygame.mixer.Sound.stop(start_sound)
+                pygame.mixer.Sound.play(play_sound)
             if self.state == "start":
                 self.start_screen();
+                pygame.mixer.Sound.stop(falling_sound)
+                pygame.mixer.Sound.play(start_sound)
 
             pygame.display.update()
 
