@@ -1,0 +1,11 @@
+SuperPlumber Requirements:
+--------------------------
+1. jump: press space, jump
+2. pipe: height can change
+3. background: small screen single picture
+
+-----------------------------
+1. jump: Two kinds of jump. Short press and long press.
+2. background: long background, keep on moving to the next frame
+3. second player: increase speed/bullets
+
