@@ -23,11 +23,13 @@ server = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
 server.bind(('', port))
 server.setblocking(0)
 clock = pygame.time.Clock()
-class FlappyBird:
 
+
+class FlappyBird:
+    
 
     def __init__(self):
-       
+
         #self.background = pygame.image.load("assets/background.png").convert()
         #self.background = pygame.transform.scale(self.background,(657, 298))                
         self.screen = pygame.display.set_mode((657, 296),0,32)
@@ -74,7 +76,9 @@ class FlappyBird:
         self.offset = random.randint(-50, 50)
         self.state = "start"
         self.font = 0
-        clock = 0
+        #clock = 0
+        self.enemy = 0
+        self.jumpcount = 0;
     
     # def background(self):
         
@@ -106,7 +110,7 @@ class FlappyBird:
 
     def updateWalls(self):
         speed = 5 + self.counter/10*2
-        self.wallx -= speed
+        self.wallx = self.wallx - speed - self.enemy
         if self.wallx < -80:
             self.wallx = 657
             self.counter += 1
@@ -222,6 +226,10 @@ class FlappyBird:
                                      -1,
                                      (255, 255, 255)),
                                      (550, 10)) #render(text, antialias, color, background=None)
+        self.screen.blit(self.font.render("jump: " + str(self.jump), # points counter
+                                     -1,
+                                     (255, 255, 255)),
+                                     (300, 10)) #render(text, antialias, color, background=None)                                     
         self.birdUpdate()                         
                              
         if self.dead:
@@ -269,7 +277,7 @@ class FlappyBird:
         back2 = pygame.image.load(b1).convert()
         back = pygame.transform.scale(back,(3687, 296))            
         back2 = pygame.transform.scale(back2,(3687, 296))          
-
+        
         x = 3687
         screenWidth = 3687
         speed = 5 + self.counter/10*2
@@ -282,7 +290,7 @@ class FlappyBird:
                 self.screen.blit(back, (x,0))
                 self.screen.blit(back2,(x-screenWidth,0))
 
-                x = x - speed
+                x = x - speed  - self.enemy
                 if x <= 0:
                     x = screenWidth
 
@@ -310,10 +318,15 @@ class FlappyBird:
             for event in pygame.event.get():# without nodes
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == pygame.KEYDOWN and not self.dead: #press, default: space key
+                #if event.type == pygame.KEYDOWN and not self.dead: #press, default: space key
+                if (pygame.key.get_pressed()[pygame.K_SPACE] != 0) and (self.jump == -100):
                     self.jump = 17
                     self.gravity = 5
                     self.jumpSpeed = 15
+                if (pygame.key.get_pressed()[pygame.K_UP] != 0):
+                    self.enemy = 2;
+                else:
+                    self.enemy = 0;
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.state == 'end':
                         self.state = 'start'
