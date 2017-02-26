@@ -66,6 +66,8 @@ class FlappyBird:
         self.start_img = pygame.transform.scale(self.start_img,(657, 298))
         
         self.get_ready_img = pygame.image.load("assets/get_ready.png").convert_alpha() #get ready marks
+        self.get_ready_img = pygame.transform.scale(self.get_ready_img,(128, 128))
+        
         self.wallx = 657
         self.bulletx = 657
         self.birdY = 249
@@ -81,6 +83,8 @@ class FlappyBird:
         #clock = 0
         self.enemy = 0
         self.jumpcount = 0
+        self.offsetb = random.randint(-10, 10)
+        self.bcounter = 0
     
     # def background(self):
         
@@ -164,7 +168,7 @@ class FlappyBird:
             self.dead = False
             self.jump = -100
             self.wallx = 657
-            self.offset = random.randint(-30, 30)
+            self.offset = random.randint(-50, 50)
             self.gravity = 5
             self.state = "end" #dead
             self.sprite = 1
@@ -183,17 +187,17 @@ class FlappyBird:
 
             # self.bird[2] = self.birdY
         bulletRect = pygame.Rect(self.bulletx,
-                            260 + self.offset,
+                            260 + self.offsetb,
                             24,
                             23)
 
         if bulletRect.colliderect(self.bird):
             self.dead = True
-            self.bird[2] = 50
+            self.bird[1] = 50
             self.birdY = 249
             self.dead = False
             self.bulletx = 657
-            self.offset = random.randint(-10, 10)
+            self.offsetb = random.randint(-10, 10)
             self.gravity = 5
             self.state = "end" #dead
             self.sprite = 1
@@ -205,7 +209,7 @@ class FlappyBird:
         if self.bulletx < -80:
             self.bulletx = 657
             self.bcounter += 1
-            self.offset = random.randint(-10, 10)
+            self.offsetb = random.randint(-10, 10)            
 
 
     def play(self):
@@ -242,6 +246,7 @@ class FlappyBird:
         # pygame.display.flip()   
         self.updateWalls()
         
+        
         self.screen.blit(self.wallUp,
                           (self.wallx, 220 + self.offset))                         
                          
@@ -249,18 +254,19 @@ class FlappyBird:
         # self.screen.blit(self.wallDown,
                          # (self.wallx, 0 - self.gap - self.offset)) # two pipes
                          
-        self.screen.blit(self.font.render("Score:" + str(self.counter*10), # points counter
+        self.screen.blit(self.font.render("Score:" + str(self.counter*10 + self.bcounter*10), # points counter
                                      -1,
                                      (255, 255, 255)),
                                      (10, 10)) #render(text, antialias, color, background=None)
+                                     
         self.screen.blit(self.font.render("Level " + str(self.counter/10+1), # points counter
                                      -1,
                                      (255, 255, 255)),
                                      (550, 10)) #render(text, antialias, color, background=None)
-        self.screen.blit(self.font.render("jump: " + str(self.jump), # points counter
-                                     -1,
-                                     (255, 255, 255)),
-                                     (300, 10)) #render(text, antialias, color, background=None)                                     
+        # self.screen.blit(self.font.render("bcounter: " + str(self.bcounter*10), # points counter
+                                     # -1,
+                                     # (255, 255, 255)),
+                                     # (300, 10)) #render(text, antialias, color, background=None)                                     
         self.birdUpdate()                         
                              
         if self.dead:
@@ -288,8 +294,8 @@ class FlappyBird:
         self.screen.fill((255, 0, 0)) #red
         self.screen.blit(self.start_img, (0, 0))
 
-        get_ready_x = 241 + 20 * math.sin(pygame.time.get_ticks() / 500.0)
-        get_ready_y = 125 + 10 * math.sin(pygame.time.get_ticks() / 150.0) 
+        get_ready_x = 160 + 20 * math.sin(pygame.time.get_ticks() / 500.0)
+        get_ready_y = 110 + 10 * math.sin(pygame.time.get_ticks() / 150.0) 
 
         self.screen.blit(self.get_ready_img, (get_ready_x, get_ready_y))#get ready animation
         # self.screen.blit(self.font.render(str(self.counter),
@@ -355,6 +361,12 @@ class FlappyBird:
                     self.gravity = 5
                     self.jumpSpeed = 15
                     self.jumpcount = self.jumpcount + 1
+                
+                # if (pygame.key.get_pressed()[pygame.K_DOWN] != 0):
+                    # self.updateBullet()
+                    # self.screen.blit(self.asset_b,
+                          # (self.bulletx, 260 + self.offsetb)) 
+                
                 if (pygame.key.get_pressed()[pygame.K_UP] != 0):
                     self.enemy = 2
                 else:
@@ -366,9 +378,17 @@ class FlappyBird:
                         #self.counter = 0
                         self.state = "play" #reset counter
 
+            if (pygame.key.get_pressed()[pygame.K_DOWN] != 0):
+                self.updateBullet()
+                self.screen.blit(self.asset_b,
+                      (self.bulletx, 260 + self.offsetb))
+            else:
+                self.bulletx = 657
+
+                      
             if self.state == "end":
                 self.screen.fill((0, 0, 0)) #black
-                self.screen.blit(self.font.render("Game Over. Score: " + str(10*self.counter),
+                self.screen.blit(self.font.render("Game Over. Score: " + str(10*self.counter+10*self.bcounter),
                              -1,
                              (255, 255, 255)),
                       (220, 140))
@@ -382,6 +402,7 @@ class FlappyBird:
             if self.state == "start":
                 self.start_screen()
                 self.counter = 0
+                self.bcounter = 0
                 pygame.mixer.Sound.stop(falling_sound)
                 pygame.mixer.Sound.play(start_sound)
 
