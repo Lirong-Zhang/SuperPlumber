@@ -295,7 +295,7 @@ class FlappyBird:
         self.screen.blit(self.start_img, (0, 0))
 
         get_ready_x = 160 + 20 * math.sin(pygame.time.get_ticks() / 500.0)
-        get_ready_y = 110 + 10 * math.sin(pygame.time.get_ticks() / 150.0) 
+        get_ready_y = 90 + 10 * math.sin(pygame.time.get_ticks() / 150.0) 
 
         self.screen.blit(self.get_ready_img, (get_ready_x, get_ready_y))#get ready animation
         # self.screen.blit(self.font.render(str(self.counter),
