@@ -42,11 +42,13 @@ class FlappyBird:
         self.asset_2 = pygame.image.load("assets/2.png").convert_alpha()
         self.asset_3 = pygame.image.load("assets/3.png").convert_alpha()        
         self.asset_d = pygame.image.load("assets/dead.png").convert_alpha()
+        self.asset_b = pygame.image.load("assets/bullet.png").convert_alpha()
         
         self.asset_1 = pygame.transform.scale(self.asset_1,(26, 48))
         self.asset_2 = pygame.transform.scale(self.asset_2,(26, 48))
         self.asset_3 = pygame.transform.scale(self.asset_3,(26, 48))        
         self.asset_d = pygame.transform.scale(self.asset_d,(26, 48))
+        self.asset_b = pygame.transform.scale(self.asset_b,(24, 23))
         
         self.birdSprites = [self.asset_1, self.asset_2, self.asset_d, self.asset_3]
         
@@ -64,8 +66,8 @@ class FlappyBird:
         self.start_img = pygame.transform.scale(self.start_img,(657, 298))
         
         self.get_ready_img = pygame.image.load("assets/get_ready.png").convert_alpha() #get ready marks
-        self.gap = 200 #distance between upper wall and lower wall
         self.wallx = 657
+        self.bulletx = 657
         self.birdY = 249
         self.jump = -100
         self.jumpSpeed = 15
@@ -178,6 +180,33 @@ class FlappyBird:
             # self.offset = random.randint(-50, 50)
             # self.gravity = 5
             # self.state = "end" #dead
+
+            # self.bird[2] = self.birdY
+        bulletRect = pygame.Rect(self.bulletx,
+                            260 + self.offset,
+                            24,
+                            23)
+
+        if bulletRect.colliderect(self.bird):
+            self.dead = True
+            self.bird[2] = 50
+            self.birdY = 249
+            self.dead = False
+            self.bulletx = 657
+            self.offset = random.randint(-10, 10)
+            self.gravity = 5
+            self.state = "end" #dead
+            self.sprite = 1
+
+
+    def updateBullet(self):
+        speed = 5 + self.counter/10*2
+        self.bulletx = self.bulletx - speed - self.enemy -2
+        if self.bulletx < -80:
+            self.bulletx = 657
+            self.bcounter += 1
+            self.offset = random.randint(-10, 10)
+
 
     def play(self):
 
