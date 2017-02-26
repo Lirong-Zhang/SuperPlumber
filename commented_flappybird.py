@@ -38,13 +38,15 @@ class FlappyBird:
         
         self.asset_1 = pygame.image.load("assets/1.png").convert_alpha()
         self.asset_2 = pygame.image.load("assets/2.png").convert_alpha()
+        self.asset_3 = pygame.image.load("assets/3.png").convert_alpha()        
         self.asset_d = pygame.image.load("assets/dead.png").convert_alpha()
         
         self.asset_1 = pygame.transform.scale(self.asset_1,(26, 48))
         self.asset_2 = pygame.transform.scale(self.asset_2,(26, 48))
+        self.asset_3 = pygame.transform.scale(self.asset_3,(26, 48))        
         self.asset_d = pygame.transform.scale(self.asset_d,(26, 48))
         
-        self.birdSprites = [self.asset_1, self.asset_2, self.asset_d]
+        self.birdSprites = [self.asset_1, self.asset_2, self.asset_d, self.asset_3]
         
         # self.birdSprites = [pygame.image.load("assets/1.png").convert_alpha(), #different motions of the birds
                             # pygame.image.load("assets/2.png").convert_alpha(),
@@ -103,7 +105,8 @@ class FlappyBird:
     
 
     def updateWalls(self):
-        self.wallx -= 5
+        speed = 5 + self.counter/10*2
+        self.wallx -= speed
         if self.wallx < -80:
             self.wallx = 657
             self.counter += 1
@@ -115,16 +118,17 @@ class FlappyBird:
             self.birdY = self.birdY - self.jumpSpeed
             self.jump = self.jump - 1
             
-        if -40< self.jump <= 0:
+        elif -40< self.jump <= 0:
             self.jumpSpeed = 10
             self.birdY = self.birdY + self.jumpSpeed
             self.jump = self.jump - 1
             if self.birdY >= 230:
                 self.birdY = 249
-                self.jump == -100            
+                self.jump == -100          
             
         else :
             self.birdY = self.birdY
+            self.jump == -100
         
             # self.jump = self.jump - 1
             # self.birdY += self.gravity
@@ -155,6 +159,7 @@ class FlappyBird:
             self.offset = random.randint(-30, 30)
             self.gravity = 5
             self.state = "end" #dead
+            self.sprite = 1
             
          #if downRect.colliderect(self.bird):
              #self.dead = True
@@ -200,7 +205,8 @@ class FlappyBird:
 
         # msElapsed = clock.tick(100)
         # pygame.display.flip()   
-                         
+        self.updateWalls()
+        
         self.screen.blit(self.wallUp,
                           (self.wallx, 220 + self.offset))                         
                          
@@ -208,23 +214,36 @@ class FlappyBird:
         # self.screen.blit(self.wallDown,
                          # (self.wallx, 0 - self.gap - self.offset)) # two pipes
                          
-        self.screen.blit(self.font.render(str(self.counter), # points counter
+        self.screen.blit(self.font.render("Score:" + str(self.counter*10), # points counter
                                      -1,
                                      (255, 255, 255)),
-                                     (200, 50)) #render(text, antialias, color, background=None)
+                                     (10, 10)) #render(text, antialias, color, background=None)
+        self.screen.blit(self.font.render("Level " + str(self.counter/10+1), # points counter
+                                     -1,
+                                     (255, 255, 255)),
+                                     (550, 10)) #render(text, antialias, color, background=None)
+        self.birdUpdate()                         
+                             
         if self.dead:
             self.sprite = 2
-        elif self.jump >-40:
+            # self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))
+
+        #elif self.jump >-40:
+        elif self.jump >-40 :
             self.sprite = 1
+            # self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))
+            
         else:
             self.sprite = 0
+            #clock.tick(60)
+            # self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))
+            #clock.tick(60)
+            # self.sprite = 3
+            # self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))
         
-        #if not self.dead:
-            #self.sprite = 0 #reverse counter: 2: dead
+        self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))
             
-        self.screen.blit(self.birdSprites[self.sprite], (70, self.birdY))            
-        self.updateWalls()
-        self.birdUpdate()
+
 
     def start_screen (self):
         self.screen.fill((255, 0, 0)) #red
@@ -234,16 +253,16 @@ class FlappyBird:
         get_ready_y = 125 + 10 * math.sin(pygame.time.get_ticks() / 150.0) 
 
         self.screen.blit(self.get_ready_img, (get_ready_x, get_ready_y))#get ready animation
-        self.screen.blit(self.font.render(str(self.counter),
-                     -1,
-                     (255, 255, 255)),
-              (180, 80))
+        # self.screen.blit(self.font.render(str(self.counter),
+                     # -1,
+                     # (255, 255, 255)),
+              # (10, 10))
 
 
     def run(self):
         #self.clock = pygame.time.Clock()
         pygame.font.init()
-        self.font = pygame.font.SysFont("Consolas", 50) 	#create a Font object from the system fonts
+        self.font = pygame.font.SysFont("Consolas", 20) 	#create a Font object from the system fonts
         
         b1 = "assets/background.png"
         back = pygame.image.load(b1).convert()
@@ -253,6 +272,7 @@ class FlappyBird:
 
         x = 3687
         screenWidth = 3687
+        speed = 5 + self.counter/10*2
         
         while True:
             clock.tick(60) #unit:ms
@@ -262,7 +282,7 @@ class FlappyBird:
                 self.screen.blit(back, (x,0))
                 self.screen.blit(back2,(x-screenWidth,0))
 
-                x = x - 5
+                x = x - speed
                 if x <= 0:
                     x = screenWidth
 
@@ -297,16 +317,16 @@ class FlappyBird:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.state == 'end':
                         self.state = 'start'
-                    else:
+                    elif self.state == 'start':
+                        #self.counter = 0
                         self.state = "play" #reset counter
-                        self.counter = 0
 
             if self.state == "end":
                 self.screen.fill((0, 0, 0)) #black
-                self.screen.blit(self.font.render("You Died: " + str(self.counter),
+                self.screen.blit(self.font.render("Game Over. Score: " + str(10*self.counter),
                              -1,
                              (255, 255, 255)),
-                      (50, 50))
+                      (220, 140))
                 pygame.mixer.Sound.stop(play_sound)
                 pygame.mixer.Sound.play(falling_sound)
       
@@ -316,6 +336,7 @@ class FlappyBird:
                 pygame.mixer.Sound.play(play_sound)
             if self.state == "start":
                 self.start_screen();
+                self.counter = 0
                 pygame.mixer.Sound.stop(falling_sound)
                 pygame.mixer.Sound.play(start_sound)
 
