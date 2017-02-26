@@ -78,7 +78,7 @@ class FlappyBird:
         self.font = 0
         #clock = 0
         self.enemy = 0
-        self.jumpcount = 0;
+        self.jumpcount = 0
     
     # def background(self):
         
@@ -122,17 +122,18 @@ class FlappyBird:
             self.birdY = self.birdY - self.jumpSpeed
             self.jump = self.jump - 1
             
-        elif -40< self.jump <= 0:
+        elif self.jump > -40:
             self.jumpSpeed = 10
             self.birdY = self.birdY + self.jumpSpeed
             self.jump = self.jump - 1
             if self.birdY >= 230:
                 self.birdY = 249
-                self.jump == -100          
+                self.jump = -100          
             
         else :
             self.birdY = self.birdY
-            self.jump == -100
+            self.jump = -100
+            self.jumpcount = 0
         
             # self.jump = self.jump - 1
             # self.birdY += self.gravity
@@ -159,6 +160,7 @@ class FlappyBird:
             self.bird[1] = 50
             self.birdY = 249
             self.dead = False
+            self.jump = -100
             self.wallx = 657
             self.offset = random.randint(-30, 30)
             self.gravity = 5
@@ -319,14 +321,15 @@ class FlappyBird:
                 if event.type == pygame.QUIT:
                     sys.exit()
                 #if event.type == pygame.KEYDOWN and not self.dead: #press, default: space key
-                if (pygame.key.get_pressed()[pygame.K_SPACE] != 0) and (self.jump == -100):
+                if (pygame.key.get_pressed()[pygame.K_SPACE] != 0) and (self.jumpcount < 2):
                     self.jump = 17
                     self.gravity = 5
                     self.jumpSpeed = 15
+                    self.jumpcount = self.jumpcount + 1
                 if (pygame.key.get_pressed()[pygame.K_UP] != 0):
-                    self.enemy = 2;
+                    self.enemy = 2
                 else:
-                    self.enemy = 0;
+                    self.enemy = 0
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.state == 'end':
                         self.state = 'start'
@@ -348,7 +351,7 @@ class FlappyBird:
                 pygame.mixer.Sound.stop(start_sound)
                 pygame.mixer.Sound.play(play_sound)
             if self.state == "start":
-                self.start_screen();
+                self.start_screen()
                 self.counter = 0
                 pygame.mixer.Sound.stop(falling_sound)
                 pygame.mixer.Sound.play(start_sound)
