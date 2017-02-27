@@ -83,7 +83,7 @@ class FlappyBird:
         #clock = 0
         self.enemy = 0
         self.jumpcount = 0
-        self.offsetb = random.randint(-10, 10)
+        self.offsetb = random.randint(-25, 10)
         self.bcounter = 0
     
     # def background(self):
@@ -197,7 +197,7 @@ class FlappyBird:
             self.birdY = 249
             self.dead = False
             self.bulletx = 657
-            self.offsetb = random.randint(-10, 10)
+            self.offsetb = random.randint(-15, 10)
             self.gravity = 5
             self.state = "end" #dead
             self.sprite = 1
@@ -209,7 +209,7 @@ class FlappyBird:
         if self.bulletx < -80:
             self.bulletx = 657
             self.bcounter += 1
-            self.offsetb = random.randint(-10, 10)            
+            self.offsetb = random.randint(-25, 10)            
 
 
     def play(self):
